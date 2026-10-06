@@ -1,0 +1,52 @@
+name: Bug report
+description: Something in the report is wrong or missing.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. The fastest way to get this fixed is to include the raw
+        dump of the session that misbehaved.
+
+  - type: input
+    id: windows
+    attributes:
+      label: Windows version
+      description: Run `winver` or `[Environment]::OSVersion.Version` and paste the build number.
+      placeholder: Windows 11 24H2 (build 26100)
+    validations:
+      required: true
+
+  - type: input
+    id: player
+    attributes:
+      label: Media app
+      description: Which app were you playing from?
+      placeholder: Spotify 1.2.3, PotPlayer 240618, ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: command
+    attributes:
+      label: Command and output
+      description: The exact command you ran and what it printed.
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: raw
+    attributes:
+      label: Raw dump
+      description: Output of `smtc-reader.exe --raw --json` while the app was playing.
+      render: json
+    validations:
+      required: false
+
+  - type: input
+    id: expected
+    attributes:
+      label: What you expected instead
+    validations:
+      required: true

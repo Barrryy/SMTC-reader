@@ -1,0 +1,15 @@
+<Project>
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Version>0.1.0</Version>
+    <Product>SMTC Reader</Product>
+    <Authors>Share-with-Codex</Authors>
+    <Company>Share-with-Codex</Company>
+    <Copyright>Copyright (c) 2026 Share-with-Codex</Copyright>
+    <RepositoryUrl>http://localhost:8101/Share-with-Codex/SMTC-reader</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <NeutralLanguage>en</NeutralLanguage>
+  </PropertyGroup>
+</Project>

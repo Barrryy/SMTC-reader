@@ -1,0 +1,24 @@
+# Build output
+bin/
+obj/
+artifacts/
+
+# IDE
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+
+# Test results
+TestResults/
+*.trx
+*.coverage
+
+# Reports produced by the tool itself
+smtc-*.md
+*.thumb.png
+
+# OS
+Thumbs.db
+.DS_Store

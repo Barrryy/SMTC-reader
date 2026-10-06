@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/SmtcReader/SmtcReader.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/SmtcReader.Tests/SmtcReader.Tests.csproj" />
+  </Folder>
+</Solution>
