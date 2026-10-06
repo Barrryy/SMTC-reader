@@ -5,9 +5,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Version>0.1.1</Version>
     <Product>SMTC Reader</Product>
-    <Authors>Share-with-Codex</Authors>
-    <Company>Share-with-Codex</Company>
-    <Copyright>Copyright (c) 2026 Share-with-Codex</Copyright>
+    <Authors>BarryZed</Authors>
+    <Company>BarryZed</Company>
+    <Copyright>Copyright (c) 2026 BarryZed</Copyright>
     <RepositoryUrl>https://github.com/Barrryy/SMTC-reader</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <NeutralLanguage>en</NeutralLanguage>
