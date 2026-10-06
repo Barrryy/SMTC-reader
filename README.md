@@ -10,34 +10,11 @@ If you are building anything that reacts to "what is playing right now", this is
 tool that tells you what the app on the other side is actually reporting, field by
 field, including the fields it silently leaves empty.
 
-```
-==============================================================================
- [1/1] PotPlayerMini64.exe  (PotPlayer)  <-- current session
-==============================================================================
-  Source app (AUMID)        : PotPlayerMini64.exe
-  Resolved app name         : PotPlayer
+![SMTC Reader output](docs/screenshot.png)
 
--- Playback ------------------------------------------------------------------
-  Playback status           : Playing
-  Media type                : Music
-  Repeat mode               : List
-  Shuffle                   : True
-  Playback rate             : 1
-
--- Timeline ------------------------------------------------------------------
-  Start                     : 00:00:00.000
-  End                       : 00:05:01.975
-  Reported position         : 00:01:25.924
-  Extrapolated position     : 00:01:26.247
-  Position updated at       : 2026-10-06 19:01:54.779 +08:00
-
--- Media properties ----------------------------------------------------------
-  Title                     : Nirvana - Smells Like Teen Spirit.mp3
-  Artist                    : <empty>
-  Album                     : <empty>
-  Genres                    : <none>
-  Thumbnail                 : image/bmp / 1.56 MB
-```
+*Real tool output for the example session in [docs/sample-report.md](docs/sample-report.md).
+The app and track names there are made up; the layout is not. Regenerate the image with
+`tools\make-screenshot.ps1`.*
 
 ## Why this exists
 
@@ -171,8 +148,8 @@ The interesting logic needs no media session to test:
 - Capabilities are read by **reflection** over the Windows type rather than a hard coded
   switch, and `ControlCapabilitiesTests` fails when a Windows update changes that
   surface. A new flag shows up in `--raw` immediately, without a code change.
-- 57 unit tests cover rendering, filtering, formatting, the CLI and the API surface,
-  including one that fails if `docs/sample-report.md` drifts from the real output.
+- 58 unit tests cover rendering, filtering, formatting, the CLI and the API surface,
+  including two that fail if the documented examples drift from the real output.
 
 ```
 src/SmtcReader

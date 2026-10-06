@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-10-06
+
+### Changed
+
+- The console hint line no longer runs to 149 characters. It was the only line wider
+  than the 78 column frame the rest of the output uses, which looked sloppy in a
+  terminal and forced the README screenshot to be either wide or small.
+
+### Added
+
+- `docs/screenshot.png`, rendered by `tools/make-screenshot.ps1` from
+  `docs/sample-console.txt`.
+
 ## [0.1.0] - 2026-10-06
 
 First release. Ported from the original `smtc-reader.ps1` PowerShell prototype.
@@ -32,5 +45,6 @@ First release. Ported from the original `smtc-reader.ps1` PowerShell prototype.
 - `docs/sample-report.md` is verified against the renderer by a test, so the
   documented example cannot drift from the real output.
 
-[Unreleased]: http://localhost:8101/Share-with-Codex/SMTC-reader/compare/v0.1.0...HEAD
+[Unreleased]: http://localhost:8101/Share-with-Codex/SMTC-reader/compare/v0.1.1...HEAD
+[0.1.1]: http://localhost:8101/Share-with-Codex/SMTC-reader/compare/v0.1.0...v0.1.1
 [0.1.0]: http://localhost:8101/Share-with-Codex/SMTC-reader/releases/tag/v0.1.0

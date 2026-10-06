@@ -35,6 +35,14 @@ Windows SDK projections from NuGet.
   a new field without a Chinese label will silently fall back to the property name.
 - **Never hide missing data.** A field the app did not report is interesting information.
   Show it as absent rather than omitting the row.
+- **Regenerate the documentation when output changes.** `docs/sample-report.md` and
+  `docs/sample-console.txt` are both asserted against the renderers, so a formatting
+  change will fail the test suite until they are updated. The README image is then a
+  one-liner:
+
+  ```powershell
+  powershell -NoProfile -ExecutionPolicy Bypass -File tools\make-screenshot.ps1
+  ```
 
 ## Repository URLs
 

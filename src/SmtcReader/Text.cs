@@ -141,8 +141,8 @@ public sealed class Text
 
     public string Hint =>
         _zh
-            ? "提示: --raw 反射列出所有原始属性, --json 输出 JSON, --watch 持续刷新, --list 只看概览, --no-markdown 不写报告。"
-            : "Tip: --raw lists every reflected property, --json emits JSON, --watch keeps refreshing, --list shows the overview only, --no-markdown skips the report.";
+            ? "提示: --raw 列出全部属性, --json 供程序读取, --watch 持续刷新。"
+            : "Tip: --raw for every property, --json for scripts, --watch to refresh.";
 
     public string Fatal(string reason) => _zh ? $"出错: {reason}" : $"Error: {reason}";
 

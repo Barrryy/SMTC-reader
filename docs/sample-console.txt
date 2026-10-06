@@ -1,0 +1,50 @@
+
+==============================================================================
+ [1/1] SpotifyAB.SpotifyMusic_zpdnekdrzrea0!Spotify  (Spotify)  <-- current session
+==============================================================================
+  Source app (AUMID) : SpotifyAB.SpotifyMusic_zpdnekdrzrea0!Spotify
+  Resolved app name  : Spotify
+
+-- Playback ------------------------------------------------------------------
+  Playback status : Playing
+  Media type      : Music
+  Repeat mode     : None
+  Shuffle         : False
+  Playback rate   : 1
+
+-- Controls ------------------------------------------------------------------
+  Play (IsPlayEnabled)                         : ✗
+  Pause (IsPauseEnabled)                       : ✓
+  Play/pause toggle (IsPlayPauseToggleEnabled) : ✓
+  Stop (IsStopEnabled)                         : ✗
+  Next (IsNextEnabled)                         : ✓
+  Previous (IsPreviousEnabled)                 : ✓
+  Fast forward (IsFastForwardEnabled)          : ✗
+  Rewind (IsRewindEnabled)                     : ✗
+  Shuffle (IsShuffleEnabled)                   : ✓
+  Repeat (IsRepeatEnabled)                     : ✓
+  Playback rate (IsPlaybackRateEnabled)        : ✗
+  Seek (IsPlaybackPositionEnabled)             : ✓
+  Channel up (IsChannelUpEnabled)              : ✗
+  Channel down (IsChannelDownEnabled)          : ✗
+  Record (IsRecordEnabled)                     : ✗
+
+-- Timeline ------------------------------------------------------------------
+  Start                 : 00:00:00.000
+  End                   : 00:03:45.000
+  Seek range            : 00:00:00.000 ~ 00:03:45.000
+  Reported position     : 00:01:12.480
+  Extrapolated position : 00:01:13.006
+  Position updated at   : 2026-10-06 19:04:00.474 +08:00
+
+-- Media properties ----------------------------------------------------------
+  Title        : Example Song
+  Subtitle     : <null>
+  Artist       : Example Artist
+  Album artist : Example Artist
+  Album        : Example Album
+  Track        : 3 / 10
+  Genres       : Indie, Dream Pop
+  Thumbnail    : image/png / 148.32 KB
+
+Tip: --raw for every property, --json for scripts, --watch to refresh.
