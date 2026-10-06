@@ -82,7 +82,8 @@ smtc-reader.exe --lang zh
 
 Every run also writes a Markdown report next to the executable, named by timestamp
 (`smtc-20261006-190401.md`). See [docs/sample-report.md](docs/sample-report.md) for what
-that looks like.
+that looks like — it uses made-up app and track names, but the layout is exactly what
+the tool prints, and a test keeps it that way.
 
 ## What gets dumped
 
@@ -170,7 +171,8 @@ The interesting logic needs no media session to test:
 - Capabilities are read by **reflection** over the Windows type rather than a hard coded
   switch, and `ControlCapabilitiesTests` fails when a Windows update changes that
   surface. A new flag shows up in `--raw` immediately, without a code change.
-- 56 unit tests cover rendering, filtering, formatting, the CLI and the API surface.
+- 57 unit tests cover rendering, filtering, formatting, the CLI and the API surface,
+  including one that fails if `docs/sample-report.md` drifts from the real output.
 
 ```
 src/SmtcReader

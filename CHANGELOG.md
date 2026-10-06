@@ -29,6 +29,8 @@ First release. Ported from the original `smtc-reader.ps1` PowerShell prototype.
   under a misleading extension).
 - Bilingual console/report output (`--lang auto|en|zh`).
 - Unit tests covering rendering, filtering, formatting and API-surface drift.
+- `docs/sample-report.md` is verified against the renderer by a test, so the
+  documented example cannot drift from the real output.
 
 [Unreleased]: http://localhost:8101/Share-with-Codex/SMTC-reader/compare/v0.1.0...HEAD
 [0.1.0]: http://localhost:8101/Share-with-Codex/SMTC-reader/releases/tag/v0.1.0

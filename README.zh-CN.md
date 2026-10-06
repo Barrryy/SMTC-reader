@@ -75,7 +75,8 @@ smtc-reader.exe --lang zh
 ```
 
 每次运行都会在 exe 旁边写一份按时间命名的 Markdown 报告（形如
-`smtc-20261006-190401.md`），样例见 [docs/sample-report.md](docs/sample-report.md)。
+`smtc-20261006-190401.md`），样例见 [docs/sample-report.md](docs/sample-report.md)
+——里面应用名和曲名是编的，但排版和工具真实输出完全一致，有测试盯着不让它跑偏。
 
 ## 都会读出什么
 
@@ -158,7 +159,8 @@ smtc-reader.exe --lang zh
 - 能力位是**反射** Windows 类型读出来的，不是硬编码 switch；
   `ControlCapabilitiesTests` 会在 Windows 更新改动这个 API 时变红。
   系统新增的字段会立刻出现在 `--raw` 里，不用改代码。
-- 56 个单元测试覆盖渲染、过滤、格式化、命令行解析和 API 面。
+- 57 个单元测试覆盖渲染、过滤、格式化、命令行解析和 API 面，其中一个专门盯
+  `docs/sample-report.md` 有没有和真实输出脱节。
 
 ```
 src/SmtcReader

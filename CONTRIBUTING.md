@@ -36,6 +36,20 @@ Windows SDK projections from NuGet.
 - **Never hide missing data.** A field the app did not report is interesting information.
   Show it as absent rather than omitting the row.
 
+## Repository URLs
+
+Every URL in this repository points at the host it currently lives on
+(`http://localhost:8101/Share-with-Codex/SMTC-reader`). If you mirror this elsewhere,
+those are the places to update:
+
+```powershell
+rg -n "localhost:8101" .
+```
+
+It is a short list: `README.md`, `README.zh-CN.md`, `CHANGELOG.md` and
+`Directory.Build.props` (`RepositoryUrl`). Everything else in the docs uses relative
+links, so it follows the repository automatically.
+
 ## Sending a change
 
 1. One topic per pull request.
