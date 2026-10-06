@@ -1,113 +1,96 @@
 # SMTC Reader
 
-[English](README.md) · **简体中文**
+[English](README.md) | 简体中文
 
-一个不依赖任何运行时的命令行小工具，把 Windows 应用通过 SMTC（System Media Transport
-Controls，系统媒体传输控件）抛出来的信息**全部**打出来——也就是媒体弹窗和键盘上那个
-播放/暂停键背后的一套数据。
+SMTC Reader 是一个 Windows 命令行工具，用于输出应用程序通过 SMTC（System Media
+Transport Controls，系统媒体传输控件）发布的全部数据。SMTC 是系统媒体面板与键盘媒体键
+所依赖的接口。
 
-如果你正在做任何"跟随当前播放内容"的东西，这个工具能告诉你对面那个应用到底报了什么、
-又悄悄留空了哪些字段。
+本工具用于诊断依赖"当前播放内容"的集成场景：可以查看某个应用设置了哪些字段、哪些字段
+为空、哪些字段从未上报。
 
 ![SMTC Reader 输出](docs/screenshot.png)
 
-*这是 [docs/sample-report.md](docs/sample-report.md) 里那个示例会话的真实工具输出。
-里面的应用名和曲名是编的，排版不是。重出这张图用 `tools\make-screenshot.ps1`。*
-
-## 为什么要有它
-
-SMTC 是"约定"而不是"保证"：每个应用自己决定填多少。Spotify 会报出完整的曲目信息，
-桌面播放器可能只给一个文件名，还有的应用会把 BMP 数据顶着 PNG 的名字丢出来。
-从外面猜是没用的，得看原始值。
-
-这个工具会把它们全列出来，并且**严格区分**三种状态：*字段不存在*（`<null>`）、
-*字段存在但内容为空*（`<empty>`）、*有值*。
+*上图为 [docs/sample-report.md](docs/sample-report.md) 中示例会话的实际输出。示例中的
+应用名与曲名为虚构，排版未作修改。图片可用 `tools\make-screenshot.ps1` 重新生成。*
 
 ## 环境要求
 
-- Windows 10 1809（build 17763）及以上，或 Windows 11。
-- 只运行：不需要装任何东西，Release 是自包含的单文件 exe。
-- 要自己编译：.NET SDK 10.0 或更新。
+- Windows 10 1809（build 17763）或更高版本，或 Windows 11。
+- 仅运行：无附加依赖。Release 中的可执行文件为自包含版本。
+- 自行构建：.NET SDK 10.0 或更高版本。
 
 ## 安装
 
-从 [Releases 页面](http://localhost:8101/Share-with-Codex/SMTC-reader/releases) 下载
-`smtc-reader.exe` 直接运行。没有安装程序，也不用装运行时。
+从 [Releases 页面](http://localhost:8101/Share-with-Codex/SMTC-reader/releases)
+下载 `smtc-reader.exe` 后直接运行，无需安装程序，也无需安装运行时。
 
-## 快速上手
+## 用法
 
 ```powershell
-# 全都打出来
 smtc-reader.exe
-
-# 只看概览，每秒刷新
 smtc-reader.exe --list --watch
-
-# 只看某个播放器，顺便导出封面
 smtc-reader.exe --app potplayer --thumbnail cover.png
-
-# 给程序读的 JSON
 smtc-reader.exe --json > sessions.json
-
-# 中文输出
 smtc-reader.exe --lang zh
 ```
 
-每次运行都会在 exe 旁边写一份按时间命名的 Markdown 报告（形如
-`smtc-20261006-190401.md`），样例见 [docs/sample-report.md](docs/sample-report.md)
-——里面应用名和曲名是编的，但排版和工具真实输出完全一致，有测试盯着不让它跑偏。
+每次运行还会在可执行文件所在目录写入一份 Markdown 报告，文件名以采集时间命名，例如
+`smtc-20261006-190401.md`。示例见 [docs/sample-report.md](docs/sample-report.md)。
 
-## 都会读出什么
+## 输出内容
+
+SMTC 每个会话的数据分为四组，本工具全部输出，逐字段说明见
+[docs/fields.md](docs/fields.md)。
 
 | 分类 | 字段 |
 | --- | --- |
-| 会话 | `SourceAppUserModelId`、尽力解析出的应用显示名、是否为系统当前会话 |
+| 会话 | `SourceAppUserModelId`、尽力解析出的应用显示名、是否为 Windows 认定的当前会话 |
 | 播放 | 播放状态、媒体类型、循环模式、随机播放、倍速 |
-| 能力位 | 全部 15 个 `IsXxxEnabled` 标志 |
+| 能力位 | 全部 15 个标志（`IsPlayEnabled`、`IsNextEnabled` 等） |
 | 时间轴 | 起点、终点、可拖动范围、应用上报进度、外推进度、进度更新时间 |
-| 媒体信息 | 曲名、副标题、歌手、专辑歌手、专辑、音轨号、总音轨数、流派、封面（格式 + 大小） |
-| 原始（`--raw`） | 反射列出每个对象的全部属性，包括本工具还不认识的 |
+| 媒体信息 | 曲名、副标题、歌手、专辑歌手、专辑、音轨号、总音轨数、流派、封面格式与大小 |
+| 原始数据（`--raw`） | 反射列出每个对象的全部属性，包括本工具尚不认识的属性 |
 
-应用没实现的字段会被明确标成"没有"，而不是悄悄省略。逐字段说明见
-[docs/fields.md](docs/fields.md)。
+应用未实现的字段会被标记为缺失，而非省略。
 
 ## 命令行参数
 
 | 参数 | 说明 |
 | --- | --- |
-| `-a`、`--app <关键词>` | 只保留 AUMID 或显示名匹配的会话。支持 `*` 通配符；不含通配符时按子串匹配。 |
-| `-l`、`--list` | 只打印概览表。 |
-| `-w`、`--watch` | 持续刷新，Ctrl+C 退出。 |
+| `-a`、`--app <关键词>` | 仅输出 AUMID 或应用显示名匹配的会话。`*` 视为通配符；不含通配符时按子串匹配。 |
+| `-l`、`--list` | 仅打印概览表。 |
+| `-w`、`--watch` | 持续刷新，Ctrl+C 中断。 |
 | `-i`、`--interval <秒>` | `--watch` 的刷新间隔，默认 `1.0`。 |
-| `-n`、`--count <次数>` | 刷够 n 次就停，`0` 表示一直刷。 |
-| `-t`、`--thumbnail <路径>` | 导出封面。多会话时会附加序号和 AUMID，扩展名按真实格式取。 |
-| `--out-dir <目录>` | Markdown 报告的输出目录，默认在 exe 旁边。 |
-| `--no-markdown` | 不写报告。 |
-| `--raw` | 额外反射列出所有属性。 |
-| `-j`、`--json` | stdout 输出 JSON，状态信息改走 stderr。 |
-| `--lang <auto\|en\|zh>` | 输出语言，默认 `auto`（跟随系统）。 |
-| `-h`、`--help` | 帮助。 |
-| `--version` | 版本。 |
+| `-n`、`--count <次数>` | 刷新指定次数后停止，`0` 表示运行至 Ctrl+C。 |
+| `-t`、`--thumbnail <路径>` | 导出封面到指定路径。多会话时会在文件名中附加序号与 AUMID，扩展名按实际图片格式确定。 |
+| `--out-dir <目录>` | Markdown 报告的输出目录，默认为可执行文件所在目录。 |
+| `--no-markdown` | 不写入报告。 |
+| `--raw` | 附加每个属性的反射转储。 |
+| `-j`、`--json` | 标准输出改为 JSON，状态信息写入标准错误。 |
+| `--lang <auto\|en\|zh>` | 输出语言，默认 `auto`，跟随系统界面语言。 |
+| `-h`、`--help` | 显示用法。 |
+| `--version` | 显示版本。 |
 
 ### 退出码
 
-| 码 | 含义 |
+| 退出码 | 含义 |
 | --- | --- |
-| `0` | 成功——包括"没有检测到会话"，那是正常状态。 |
-| `1` | 运行失败（拿不到 SMTC 代理、报告写不进去等）。 |
+| `0` | 成功。未检测到会话同样属于成功。 |
+| `1` | 运行失败，例如 SMTC 代理不可用或报告路径不可写。 |
 | `2` | 命令行参数错误。 |
 
-## 关于数据本身
+## 字段含义
 
-几个用了才不至于被坑的点：
+解读报告时需要注意以下几点。
 
-- **进度是快照。** "应用上报进度"是应用最后一次推上来的值；"按上报时间外推"会补上
-  `LastUpdatedTime` 到现在这一段，并收敛到可拖动区间内——做进度条用这个。
-  有的应用根本不给有效时间戳（报 1601 年），这种情况直接不外推，不会算出天文数字。
-- **"没有"和"空"是两回事。** `歌手 = <empty>` 是应用送了个空字符串，
-  `歌手 = <null>` 是它压根没设过这个字段。
-- **封面会撒谎。** 扩展名按文件头判断，不按应用声称的来。
-- **一个应用可能开着多个会话。** PotPlayer 就是这样，星号标的是系统当前路由媒体键的那个。
+- `应用上报进度` 是应用在 `LastUpdatedTime` 时刻发布的位置，并非持续递增的时钟。
+  `按上报时间外推` 会补上从该时刻到当前经过的时间，并收敛到可拖动范围内，制作进度条时
+  应使用后者。若应用从不更新 `LastUpdatedTime`（部分应用报 `1601-01-01`），则不做外推。
+- 缺失与空值分别表示。`<empty>` 表示应用提供了空字符串；`<null>` 表示该属性从未被设置。
+- 封面扩展名依据文件头判断，而非应用声称的内容类型。部分播放器输出的是 BMP 数据。
+- 一个应用可能拥有多个会话，PotPlayer 即为常见例子。`★` 标记 Windows 将媒体键路由到的
+  那个会话。
 
 ## JSON 输出
 
@@ -126,31 +109,23 @@ smtc-reader.exe --lang zh
 }
 ```
 
-时长用 `TimeSpan` 的标准往返格式序列化，时间戳用 ISO 8601。封面字节不会塞进 JSON，
-要导出封面请用 `--thumbnail`。
+时长使用 `TimeSpan` 标准往返格式，时间戳使用 ISO 8601。封面字节不会内联输出，如需导出
+请使用 `--thumbnail`。
 
-## 它是怎么做的
+## 实现说明
 
-设计上的重点是：**有意思的逻辑全都不需要真放音乐就能测**。
+WinRT 互操作仅存在于 `src/SmtcReader/Smtc/WinRtSessionSource.cs` 一个文件中。过滤、
+格式化与三个渲染器都是基于会话快照的纯函数，因此测试套件无需真实播放会话即可运行。
 
-- `Smtc/WinRtSessionSource.cs` 是唯一碰 WinRT 的文件，很薄。
-- 其余部分——过滤、格式化、控制台报告、Markdown 报告、JSON 契约——全是关于快照的纯函数。
-- 能力位是**反射** Windows 类型读出来的，不是硬编码 switch；
-  `ControlCapabilitiesTests` 会在 Windows 更新改动这个 API 时变红。
-  系统新增的字段会立刻出现在 `--raw` 里，不用改代码。
-- 58 个单元测试覆盖渲染、过滤、格式化、命令行解析和 API 面，其中两个专门盯文档示例
-  有没有和真实输出脱节。
+能力位通过反射枚举 Windows 类型，而非硬编码的 switch。当该 API 发生增删时，
+`ControlCapabilitiesTests` 会失败，因此字段列表不会悄然过期；API 新增的标志会直接出现
+在 `--raw` 输出中，无需改动代码。
 
-```
-src/SmtcReader
-  Cli/            命令行解析
-  Smtc/           模型、WinRT 读取、过滤、图片嗅探
-  Formatting/     各渲染器共用的取值格式化
-  Rendering/      控制台、Markdown、JSON 输出
-tests/SmtcReader.Tests
-```
+项目最初是一个 PowerShell 脚本，后移植到 .NET，原因是 PowerShell 受执行策略限制、
+PowerShell 7 没有 WinRT 投影，且动态语言不在编译期校验属性名，字段名拼写错误只会静默
+得到 null。
 
-## 编译与测试
+## 构建
 
 ```powershell
 git clone http://localhost:8101/Share-with-Codex/SMTC-reader.git
@@ -163,30 +138,32 @@ dotnet publish src/SmtcReader -c Release -r win-x64 --self-contained true `
     -p:PublishSingleFile=true -o artifacts
 ```
 
-编译需要 Windows SDK 投影包，.NET SDK 会在首次使用时从 NuGet 还原。CI 在
-`windows-latest` 上跑同样的命令。
+首次构建会从 NuGet 还原 Windows SDK 投影包。持续集成在 `windows-latest` 上执行相同的
+命令。
 
-发布出来的 exe 大约 95 MB，因为它是自包含的：用户不用装 .NET 运行时。裁剪（trimming）
-是**故意关掉**的——`--raw` 靠反射枚举 WinRT 属性，裁剪过的构建会悄悄少字段，
-而不是报错。
+发布产出的可执行文件约 95 MB，这是自包含部署避免运行时前置依赖的结果。裁剪（trimming）
+被有意关闭：原始数据报告通过反射枚举 WinRT 属性，裁剪后的构建会遗漏字段而不会报错。
 
-## 常见问题
+## 测试
 
-**什么都没有。** 当前没有应用注册 SMTC。放点东西再跑。播放器开着但没在播放，属于正常情况。
+58 个单元测试覆盖渲染、过滤、格式化、命令行解析与 API 面。其中两个断言文档示例
+（`docs/sample-report.md`、`docs/sample-console.txt`）与真实渲染器的输出一致，因此文档
+不会与实现脱节。构建将警告视为错误。
 
-**`歌手`/`专辑` 是空的，但我播放器里明明有。** 播放器没把标签转发到 SMTC。这是应用的
-选择，报告说的是实话。
+## 故障排查
 
-**封面怎么是 BMP？** 有的播放器就是丢 BMP 出来。工具按实际内容给文件命名。
+**列表为空。** 当前没有任何应用在 SMTC 注册会话。没有播放内容时属于正常状态，不是错误。
 
-**为什么不用 PowerShell？** 最初的原型就是 PowerShell 脚本，能跑，但撞三堵墙：
-执行策略、PowerShell 7 没有 WinRT 投影、字段名写错不会报错（会静默读成 null）。
-这个版本把三个都解决了，并且能发成 exe。
+**播放器界面显示歌手与专辑，但报告中为空。** 该应用未通过 SMTC 转发标签信息。报告反映的
+是应用实际发布的内容。
 
-## 参与
+**导出的封面是 BMP 文件。** 部分播放器发布的就是 BMP 数据。文件扩展名依据实际图片格式
+确定。
+
+## 参与贡献
 
 见 [CONTRIBUTING.md](CONTRIBUTING.md)。反馈问题时附上
-`smtc-reader.exe --raw --json` 的输出会好处理很多——issue 模板也是这么要求的。
+`smtc-reader.exe --raw --json` 的输出，会显著降低排查难度，issue 模板也是这样要求的。
 
 ## 许可
 

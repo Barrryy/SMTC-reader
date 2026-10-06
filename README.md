@@ -1,122 +1,105 @@
 # SMTC Reader
 
-**English** · [简体中文](README.zh-CN.md)
+English | [简体中文](README.zh-CN.md)
 
-A small, dependency-free command line tool that dumps **everything** a Windows app
-exposes through SMTC (System Media Transport Controls) — the same data that drives the
-media popup and the play/pause key on your keyboard.
+SMTC Reader is a command-line utility for Windows. It reports every value an
+application publishes through SMTC (System Media Transport Controls), the interface
+behind the media overlay and the keyboard media keys.
 
-If you are building anything that reacts to "what is playing right now", this is the
-tool that tells you what the app on the other side is actually reporting, field by
-field, including the fields it silently leaves empty.
+The tool is intended for diagnosing integrations that depend on the currently playing
+item. It shows which fields an application sets, which it leaves empty, and which it
+never populates at all.
 
 ![SMTC Reader output](docs/screenshot.png)
 
-*Real tool output for the example session in [docs/sample-report.md](docs/sample-report.md).
-The app and track names there are made up; the layout is not. Regenerate the image with
+*Output for the example session documented in
+[docs/sample-report.md](docs/sample-report.md). Application and track names in the
+example are fictitious; the layout is unmodified. The image can be regenerated with
 `tools\make-screenshot.ps1`.*
-
-## Why this exists
-
-SMTC is a contract, not a guarantee: every app decides how much of it to fill in.
-Spotify reports rich metadata, a desktop player may report nothing but a file name, and
-some apps hand out BMP data while insisting it is a PNG. Debugging that from the outside
-is guesswork unless you can see the raw values.
-
-This tool shows all of it, and it is deliberately explicit about the difference between
-*absent* (`<null>`), *present but empty* (`<empty>`) and *an actual value*.
 
 ## Requirements
 
-- Windows 10 version 1809 (build 17763) or newer, or Windows 11.
-- To **run**: nothing else. Releases are published as a self-contained single file.
-- To **build**: the .NET SDK 10.0 or newer.
+- Windows 10 version 1809 (build 17763) or later, or Windows 11.
+- To run: no additional components. Release binaries are self-contained.
+- To build: .NET SDK 10.0 or later.
 
-## Install
+## Installation
 
 Download `smtc-reader.exe` from the
-[releases page](http://localhost:8101/Share-with-Codex/SMTC-reader/releases) and run it.
-There is no installer and no runtime to install.
+[releases page](http://localhost:8101/Share-with-Codex/SMTC-reader/releases). No
+installer or runtime is required.
 
-## Quick start
+## Usage
 
 ```powershell
-# everything, right now
 smtc-reader.exe
-
-# just the overview, keep refreshing
 smtc-reader.exe --list --watch
-
-# one player only, and pull the album art out
 smtc-reader.exe --app potplayer --thumbnail cover.png
-
-# machine readable
 smtc-reader.exe --json > sessions.json
-
-# Chinese output
 smtc-reader.exe --lang zh
 ```
 
-Every run also writes a Markdown report next to the executable, named by timestamp
-(`smtc-20261006-190401.md`). See [docs/sample-report.md](docs/sample-report.md) for what
-that looks like — it uses made-up app and track names, but the layout is exactly what
-the tool prints, and a test keeps it that way.
+Each run also writes a Markdown report next to the executable, named after the capture
+time (`smtc-20261006-190401.md`). An example is in
+[docs/sample-report.md](docs/sample-report.md).
 
-## What gets dumped
+## Output
 
-| Area | Fields |
+SMTC data is organised into four groups per session. All four are reported, together
+with a per-field reference in [docs/fields.md](docs/fields.md).
+
+| Group | Fields |
 | --- | --- |
-| Session | `SourceAppUserModelId`, best-effort resolved app name, whether Windows considers it the current session |
+| Session | `SourceAppUserModelId`, a best-effort resolved application name, and whether Windows treats the session as the current one |
 | Playback | status, media type, repeat mode, shuffle, playback rate |
-| Controls | all 15 capability flags (`IsPlayEnabled`, `IsNextEnabled`, …) |
+| Controls | all 15 capability flags (`IsPlayEnabled`, `IsNextEnabled`, and so on) |
 | Timeline | start, end, seek range, reported position, extrapolated position, last update time |
-| Media properties | title, subtitle, artist, album artist, album, track number, album track count, genres, thumbnail (format + size) |
-| Raw (`--raw`) | every reflected property of every object, including ones this tool does not know about |
+| Media properties | title, subtitle, artist, album artist, album, track number, album track count, genres, thumbnail format and size |
+| Raw (`--raw`) | every reflected property of every object, including properties this tool does not know about |
 
-Fields that an app does not implement are reported as missing rather than silently
-hidden — see [docs/fields.md](docs/fields.md) for the per-field notes.
+Fields an application does not implement are reported as missing rather than omitted.
 
-## Command line
+## Options
 
-| Option | Meaning |
+| Option | Description |
 | --- | --- |
-| `-a`, `--app <pattern>` | Only sessions whose AUMID or resolved name matches. `*` wildcards supported; a pattern without one is a substring match. |
-| `-l`, `--list` | Overview table only. |
-| `-w`, `--watch` | Keep refreshing until Ctrl+C. |
-| `-i`, `--interval <sec>` | Refresh interval for `--watch` (default `1.0`). |
-| `-n`, `--count <n>` | Stop after `n` refreshes; `0` means until Ctrl+C. |
-| `-t`, `--thumbnail <path>` | Write the album art. With several sessions the index and AUMID are appended, and the extension follows the real image format. |
-| `--out-dir <dir>` | Where to write the Markdown report (default: next to the executable). |
+| `-a`, `--app <pattern>` | Restrict output to sessions whose AUMID or resolved name matches. `*` is treated as a wildcard; without one the pattern is a substring match. |
+| `-l`, `--list` | Print the overview table only. |
+| `-w`, `--watch` | Refresh until interrupted with Ctrl+C. |
+| `-i`, `--interval <seconds>` | Refresh interval for `--watch`. Default `1.0`. |
+| `-n`, `--count <n>` | Stop after `n` refreshes. `0` runs until Ctrl+C. |
+| `-t`, `--thumbnail <path>` | Write the album art to this path. With multiple sessions the index and AUMID are appended; the extension follows the actual image format. |
+| `--out-dir <dir>` | Directory for the Markdown report. Default: the executable's directory. |
 | `--no-markdown` | Do not write a report. |
-| `--raw` | Add a reflected dump of every property. |
-| `-j`, `--json` | JSON on stdout instead of the text report. Status lines move to stderr. |
-| `--lang <auto\|en\|zh>` | Output language (default `auto`, follows the system UI language). |
-| `-h`, `--help` | Help. |
-| `--version` | Version. |
+| `--raw` | Include a reflected dump of every property. |
+| `-j`, `--json` | Write JSON to standard output instead of the text report. Status messages are written to standard error. |
+| `--lang <auto\|en\|zh>` | Output language. Default `auto`, which follows the system UI language. |
+| `-h`, `--help` | Show usage information. |
+| `--version` | Show the version. |
 
 ### Exit codes
 
 | Code | Meaning |
 | --- | --- |
-| `0` | Success — including "no sessions found", which is a normal state. |
-| `1` | Runtime failure (SMTC broker unavailable, report not writable, …). |
-| `2` | Bad command line. |
+| `0` | Success. This includes the case where no session is present. |
+| `1` | Runtime failure, for example an unavailable SMTC broker or an unwritable report path. |
+| `2` | Invalid command line. |
 
-## Notes on the data
+## Field semantics
 
-A few things worth knowing before you trust a field:
+The following points are worth knowing when interpreting a report.
 
-- **Position is a snapshot.** Reported position is what the app last pushed. The
-  extrapolated position adds the time since `LastUpdatedTime` and clamps to the seekable
-  range, which is what you want for a progress bar. When an app never updates its
-  timeline (some report `1601-01-01`), the extrapolation is dropped instead of producing
-  nonsense.
-- **Missing is not the same as empty.** `Artist = <empty>` means the app sent a string
-  with no content; `Artist = <null>` means it never set the field.
-- **Thumbnails lie about their format.** The extension follows the file's magic bytes,
-  not what the app claims.
-- **One app can hold several sessions.** PotPlayer is a good example; the star marks the
-  one Windows currently routes media keys to.
+- `Reported position` is the value the application published at `LastUpdatedTime`;
+  it is not a continuously advancing clock. `Extrapolated position` adds the time
+  elapsed since `LastUpdatedTime` and clamps the result to the seekable range, which
+  is the value to use for a progress indicator. If an application never updates
+  `LastUpdatedTime` (some report `1601-01-01`), no extrapolation is performed.
+- Missing and empty values are distinguished. `<empty>` means the application
+  supplied an empty string; `<null>` means the property was never set.
+- The thumbnail extension is derived from the file signature rather than from the
+  content type reported by the application. Several players publish BMP data.
+- An application may own more than one session. PotPlayer is a common example. The
+  `★` marks the session that Windows routes media keys to.
 
 ## JSON output
 
@@ -135,32 +118,26 @@ A few things worth knowing before you trust a field:
 }
 ```
 
-Durations are serialized in the standard `TimeSpan` round-trip format and timestamps as
-ISO 8601. Thumbnail bytes are never inlined — use `--thumbnail` for that.
+Durations use the standard `TimeSpan` round-trip format and timestamps use ISO 8601.
+Thumbnail bytes are never inlined; use `--thumbnail` to export them.
 
-## How it is built
+## Implementation notes
 
-The interesting logic needs no media session to test:
+WinRT interop is confined to `src/SmtcReader/Smtc/WinRtSessionSource.cs`. Filtering,
+formatting and the three renderers are pure functions over session snapshots, so the
+test suite runs without a media session.
 
-- `Smtc/WinRtSessionSource.cs` is the only file that talks to WinRT. It is thin.
-- Everything else — filtering, formatting, the console report, the Markdown report, the
-  JSON contract — is a pure function over snapshots.
-- Capabilities are read by **reflection** over the Windows type rather than a hard coded
-  switch, and `ControlCapabilitiesTests` fails when a Windows update changes that
-  surface. A new flag shows up in `--raw` immediately, without a code change.
-- 58 unit tests cover rendering, filtering, formatting, the CLI and the API surface,
-  including two that fail if the documented examples drift from the real output.
+Capability flags are enumerated by reflection over the Windows type rather than a hard
+coded switch. `ControlCapabilitiesTests` fails when that API is extended or changed, so
+the reported field list cannot silently become stale, and a new flag appears in the
+`--raw` output without a code change.
 
-```
-src/SmtcReader
-  Cli/            argument parsing
-  Smtc/           models, the WinRT source, filtering, image sniffing
-  Formatting/     value formatting shared by the renderers
-  Rendering/      console, Markdown and JSON output
-tests/SmtcReader.Tests
-```
+The project was initially a PowerShell script. It was ported to .NET because
+PowerShell imposes an execution policy, PowerShell 7 has no WinRT projection, and a
+dynamic language does not check property names at compile time, so a misspelled field
+resolves to null without error.
 
-## Build and test
+## Building
 
 ```powershell
 git clone http://localhost:8101/Share-with-Codex/SMTC-reader.git
@@ -173,35 +150,38 @@ dotnet publish src/SmtcReader -c Release -r win-x64 --self-contained true `
     -p:PublishSingleFile=true -o artifacts
 ```
 
-The build needs the Windows SDK projections, which the .NET SDK restores from NuGet on
-first use. CI runs the same commands on `windows-latest`.
+The first build restores the Windows SDK projections from NuGet. Continuous
+integration runs the same commands on `windows-latest`.
 
-The published executable is about 95 MB because it is self-contained: there is no .NET
-runtime to install. Trimming is switched off deliberately — the `--raw` report reads
-WinRT properties by reflection, and a trimmed build would quietly drop fields rather
-than fail loudly.
+The published executable is approximately 95 MB, because self-contained deployment
+avoids a runtime prerequisite. Trimming is disabled deliberately: the raw report
+enumerates WinRT properties by reflection, and a trimmed build would omit fields
+without failing.
 
-## FAQ
+## Tests
 
-**Nothing shows up.** No app is currently registered with SMTC. Play something, then run
-it again. A player with nothing playing is a normal empty result.
+58 unit tests cover rendering, filtering, formatting, the command line and the API
+surface. Two of them assert that the documented examples
+(`docs/sample-report.md`, `docs/sample-console.txt`) match the output of the real
+renderers, so the documentation cannot drift. The build treats warnings as errors.
 
-**`Artist` / `Album` are empty but my player shows them.** The player is not forwarding
-tags over SMTC. That is the app's choice and the report is telling you the truth.
+## Troubleshooting
 
-**The thumbnail is a BMP.** Some players hand out BMP data. The tool names the file after
-what is actually inside it.
+**No sessions are listed.** No application is registered with SMTC at that moment.
+This is the normal state when nothing is playing, and it is not an error.
 
-**Why not PowerShell?** The original prototype was a PowerShell script and it works, but
-it hits three walls: execution policy, PowerShell 7 having no WinRT projection, and no
-compile-time checking of field names (a typo silently reads as "null"). This port fixes
-all three and ships as an executable.
+**Artist and album fields are empty although the player displays them.** The
+application does not forward tag data over SMTC. The report reflects what the
+application publishes.
+
+**The exported thumbnail is a BMP file.** Several players publish BMP data. The file
+extension is chosen from the actual image format.
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). Bug reports are much easier to act on when they
-include the output of `smtc-reader.exe --raw --json`, which is exactly what the issue
-template asks for.
+See [CONTRIBUTING.md](CONTRIBUTING.md). Bug reports are considerably easier to act on
+when they include the output of `smtc-reader.exe --raw --json`, which is what the
+issue template requests.
 
 ## License
 
