@@ -8,7 +8,7 @@
     <Authors>Share-with-Codex</Authors>
     <Company>Share-with-Codex</Company>
     <Copyright>Copyright (c) 2026 Share-with-Codex</Copyright>
-    <RepositoryUrl>http://localhost:8101/Share-with-Codex/SMTC-reader</RepositoryUrl>
+    <RepositoryUrl>https://github.com/Barrryy/SMTC-reader</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <NeutralLanguage>en</NeutralLanguage>
   </PropertyGroup>

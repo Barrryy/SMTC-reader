@@ -45,6 +45,6 @@ First release. Ported from the original `smtc-reader.ps1` PowerShell prototype.
 - `docs/sample-report.md` is verified against the renderer by a test, so the
   documented example cannot drift from the real output.
 
-[Unreleased]: http://localhost:8101/Share-with-Codex/SMTC-reader/compare/v0.1.1...HEAD
-[0.1.1]: http://localhost:8101/Share-with-Codex/SMTC-reader/compare/v0.1.0...v0.1.1
-[0.1.0]: http://localhost:8101/Share-with-Codex/SMTC-reader/releases/tag/v0.1.0
+[Unreleased]: https://github.com/Barrryy/SMTC-reader/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/Barrryy/SMTC-reader/compare/v0.1.0...v0.1.1
+[0.1.0]: https://github.com/Barrryy/SMTC-reader/releases/tag/v0.1.0
